@@ -100,6 +100,7 @@ BallMapper <- function( points , values , epsilon )
   #Here we create the edges with weights:
   from = vector()
   to = vector()
+  strength_of_edges = vector()
 	#..and an adjlist
 	adj <- list() #vector(length = number_of_landmark)
 	for(i in 1:number_of_landmark) {
@@ -118,37 +119,58 @@ BallMapper <- function( points , values , epsilon )
 					fr <- coverage[[i]][j]
 					t0 <- coverage[[i]][k]
 					adj[[ fr ]] <- c( adj[[ fr ]], t0 )
-					# print(paste(fr, t0 ))
         }
       }
     }
   }
+	
 	for(i in 1:number_of_landmark) {
-		# print(paste("length of adj",i,length(adj[[i]])))
 		if(length(adj[[i]]) == 0 ) {
 			next
 		}
 		
 		srt <- order(adj[[i]])
-		newadj <- vector()
+		ad <- vector(length = length(srt))
 		for(j in 1:length(srt) ) {
-			newadj[j] <- adj[[i]][ srt[j] ]
-		}
-		for(j in 1:length(adj[[i]]) ) {
-			adj[[i]][j] <- newadj[j]
-		}
-		
-		for(j in 1:length( adj[[i]] ) )  {
-			print(paste(i, adj[[i]][j]))
+			ad[j] <- adj[[ i]][ srt[j]]
+			# print(paste(i, ad[j]))
 			from <- c(from, i)
-			to <- c(to, adj[[i]][j])
+			to <- c(to, ad[j])
 		}
+
+		# for(j in 1:length(ad)) {
+		# 	adj[[ i]][j] <- ad[j]
+		# }
+		# j <- 0
+		# # for(j in length(ad)) {
+		# # 	print(paste(i, ad[j]))
+		# # }
+		# while(j <= length( adj[[ i]]) )  {
+		# 	from <- c(from, i)
+		# 	to <- c(to, adj[[ i]][j])
+		# 	k = j
+		# 	# print(paste(j))
+		# 	while((k <= length( adj[[ i]])) & (adj[[i]][j] == adj[[i]][k])) {
+		# 		# if(ok) {
+		# 			k <- k+1
+		# 		# }
+		# 		# else {
+		# 			# break
+		# 		# }
+		# 	}
+		# 	strength_of_edges <- c(strength_of_edges, k-j)
+		# 	j <- k
+		# }
 	}
+	# print(paste("####################"))
+	links = cbind(from, to)
 
-
+	# for(i in 1:length(from)) {
+	# 	print(paste(from[i], to[i]))
+	# }
   #and here we create the network. Nodes are weighted by the number of points covered by them
   nodes=cbind('id'=1:number_of_landmark,size=number_of_covered_points)
-  links = cbind(from,to)
+  
 
   #We may want to remove repetitions from links:
   #links <- unique(links)
@@ -163,14 +185,15 @@ BallMapper <- function( points , values , epsilon )
   
   unique_from = vector()
   unique_to = vector()
-  strength_of_edges = vector()
   was_edge_counted <- vector(  length=length(links[,1])  )
   first_not_counted_edge = 1;
   while ( first_not_counted_edge <= length(links[,1]) )
   {
     #print(paste0("Edge to consider: ", links[first_not_counted_edge,1],  " " , links[first_not_counted_edge,2]))
     number_of_repetitions_of_this_edge <- 0
-    for ( i in first_not_counted_edge:length(links[,1]) )
+		i <- first_not_counted_edge
+		first_not_counted_edge_new = length(links[,1])+1
+    while ( i <= length(links[,1]) )
     {
       if ( (links[i,1] == links[first_not_counted_edge,1])&(links[i,2] == links[first_not_counted_edge,2]) )
       {
@@ -178,25 +201,20 @@ BallMapper <- function( points , values , epsilon )
         was_edge_counted[ i ] = TRUE;
       }
       else {
-          break
+          first_not_counted_edge_new = i
+					break
       }
+			i <- i + 1
     }
     unique_from = c( unique_from , links[first_not_counted_edge,1]  )
     unique_to = c( unique_to  , links[first_not_counted_edge,2] )
     strength_of_edges = c( strength_of_edges , number_of_repetitions_of_this_edge )
-    while ( first_not_counted_edge <= length(links[,1]) )
-    {
-      if ( was_edge_counted[ first_not_counted_edge ] == TRUE )
-      {
-        first_not_counted_edge <- first_not_counted_edge+1;
-      }
-      else
-      {
-        break
-      }
-    }
+		first_not_counted_edge = first_not_counted_edge_new
   }
   links = cbind(unique_from,unique_to)
+	# for(i in 1:length(unique_from)) {
+	# 	print(paste(unique_from[i], unique_to[i], strength_of_edges[i]))
+	# }
   return_list <- list( "vertices" = nodes , "edges" = links ,
                        "edges_strength" = strength_of_edges ,
                        "points_covered_by_landmarks" = points_covered_by_landmarks,
@@ -215,15 +233,16 @@ tot <- 0
 num_it <- 1
 for(it in 1:num_it) {
     st<-proc.time()
-    epsilon <- 100
+    epsilon <- 80
     l <- BallMapper(points, values, epsilon)
     en <- proc.time()
+    # print(paste("time taken by new ball mapper = ", en-st))
     tot <- tot + en-st
 }
 
 
 ColorIgraphPlot(l)
-print(paste("time taken by new ball mapper = ", tot/num_it))
+print(paste("total time taken by new ball mapper = ", (tot/num_it)))
 
 #'Produce a static color visualization of the Ball Mapper graph. It is based on the output from BallMapper function.
 #'
