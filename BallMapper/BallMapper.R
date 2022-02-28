@@ -169,6 +169,26 @@ BallMapper <- function( points , values , epsilon )
 }#BallMapper
 
 
+## driver code
+df <- read.csv("data/boston.csv", header = FALSE)
+values <- (df$V14)
+points <- subset(df, select = -V14)
+
+tot <- 0
+num_it = 1
+for(it in 1:num_it) {
+    st<-proc.time()
+    epsilon <- 100
+    l <- BallMapper(points, values, epsilon)
+    en <- proc.time()
+    print(paste("time taken by original ball mapper = ", en-st))
+    tot <- tot + en-st
+}
+
+
+ColorIgraphPlot(l)
+# print(paste("time taken by original ball mapper = ", tot/num_it))
+
 #'Produce a static color visualization of the Ball Mapper graph. It is based on the output from BallMapper function.
 #'
 #'@param outputFromBallMapper, an output from the BallMapper function

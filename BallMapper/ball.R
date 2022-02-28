@@ -100,6 +100,11 @@ BallMapper <- function( points , values , epsilon )
   #Here we create the edges with weights:
   from = vector()
   to = vector()
+	#..and an adjlist
+	adj <- list() #vector(length = number_of_landmark)
+	for(i in 1:number_of_landmark) {
+		adj[[i]] <- vector()
+	}
   for ( i in 1:length(coverage) )
   {
     for ( j in 1:length(coverage[[i]]) )
@@ -108,12 +113,37 @@ BallMapper <- function( points , values , epsilon )
       {
         if ( j != k )
         {
-          from <- c( from,coverage[[i]][j] )
-          to <- c(to,coverage[[i]][k])
+          # from <- c( from,coverage[[i]][j] )
+          # to <- c(to,coverage[[i]][k])
+					fr <- coverage[[i]][j]
+					t0 <- coverage[[i]][k]
+					adj[[ fr ]] <- c( adj[[ fr ]], t0 )
+					# print(paste(fr, t0 ))
         }
       }
     }
   }
+	for(i in 1:number_of_landmark) {
+		# print(paste("length of adj",i,length(adj[[i]])))
+		if(length(adj[[i]]) == 0 ) {
+			next
+		}
+		
+		srt <- order(adj[[i]])
+		newadj <- vector()
+		for(j in 1:length(srt) ) {
+			newadj[j] <- adj[[i]][ srt[j] ]
+		}
+		for(j in 1:length(adj[[i]]) ) {
+			adj[[i]][j] <- newadj[j]
+		}
+		
+		for(j in 1:length( adj[[i]] ) )  {
+			print(paste(i, adj[[i]][j]))
+			from <- c(from, i)
+			to <- c(to, adj[[i]][j])
+		}
+	}
 
 
   #and here we create the network. Nodes are weighted by the number of points covered by them
@@ -127,10 +157,9 @@ BallMapper <- function( points , values , epsilon )
   #as the edge's weight and utilized during the visualization.
   #NOTE THAT THIS IS QUADRATIC PROCEDURE THAT SHOULD BE OPTIMIZED!! [done]
 
-  # in order to optimise, sort the links, then use two-pointers (see code below).
+  # in order to optimise, sort the links, then use two-pointers.
   # This reduces quadratic procedure to O(nlogn) procesdure, 
   # where, n <- total no. of links (including duplicate links)
-  sort(links)
   
   unique_from = vector()
   unique_to = vector()
@@ -183,7 +212,7 @@ values <- (df$V14)
 points <- subset(df, select = -V14)
 
 tot <- 0
-num_it <- 10
+num_it <- 1
 for(it in 1:num_it) {
     st<-proc.time()
     epsilon <- 100
@@ -192,8 +221,9 @@ for(it in 1:num_it) {
     tot <- tot + en-st
 }
 
-(en - st)
+
 ColorIgraphPlot(l)
+print(paste("time taken by new ball mapper = ", tot/num_it))
 
 #'Produce a static color visualization of the Ball Mapper graph. It is based on the output from BallMapper function.
 #'
