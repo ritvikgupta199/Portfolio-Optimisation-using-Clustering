@@ -14,7 +14,7 @@ library(stringr)
 #'edges_strength, For every edge [a,b] we define its strength as the number of points that are covered by both landmarks a and b. This array contains the strength of every edge in the Ball Mapper graph.
 #'points_covered_by_landmarks, is a list of vectors. I-th vector contains the positions of points covered by i-th landmark.
 #'landmarks, contains a list of positions of the landmark points used to construct the balls.
-#'coloring, is a vector having as many positions as the number of lanrmarks. It contains the averaged outcome values of the coloring variable corresponding to the points covered by each landmark.
+#'coloring, is a vector having as many positions as the number of landmarks. It contains the averaged outcome values of the coloring variable corresponding to the points covered by each landmark.
 #' @examples
 #' var <- seq(from=0,to=6.3,by=0.1)
 #' points <- as.data.frame( cbind( sin(var),cos(var) ) )
@@ -58,7 +58,7 @@ BallMapper <- function( points , values , epsilon )
     #print(paste0("first_uncovered: ", first_uncovered))
     number_of_landmark <- number_of_landmark+1
   }
-  #To ballance the last additional increment.
+  #To balance the last additional increment.
   number_of_landmark <- number_of_landmark-1
 
   #Over here we compute the list of elements which are covered by the following landmarks:
@@ -77,10 +77,10 @@ BallMapper <- function( points , values , epsilon )
 
   #now we create a graph. Number of vertices is the same as number_of_landmark.
   #We will create a list storing the number of points covered by each landmark.
-  numer_of_covered_points = vector( length=number_of_landmark )
+  number_of_covered_points = vector( length=number_of_landmark )
   for ( i in 1:length(points_covered_by_landmarks) )
   {
-    numer_of_covered_points[ i ] <- 2+length(points_covered_by_landmarks[[i]])
+    number_of_covered_points[ i ] <- 2+length(points_covered_by_landmarks[[i]])
   }
 
   #And for every landmark, we will consider all the points covered by it, and compute the average value of function therein.
@@ -96,7 +96,6 @@ BallMapper <- function( points , values , epsilon )
     average_function_value <- average_function_value/length(points_covered_by_landmarks[[i]])
     coloring[i] <- average_function_value
   }
-
 
   #Here we create the edges with weights:
   from = vector()
@@ -118,15 +117,15 @@ BallMapper <- function( points , values , epsilon )
 
 
   #and here we create the network. Nodes are weighted by the number of points covered by them
-  nodes=cbind('id'=1:number_of_landmark,size=numer_of_covered_points)
+  nodes=cbind('id'=1:number_of_landmark,size=number_of_covered_points)
   links = cbind(from,to)
 
   #We may want to remove repetitions from links:
   #links <- unique(links)
   #or to use the number of repetitions as a measure of a strength of an edge ToDo
   #this part of code compute number of repetitions of edges. This number can be used
-  #as the edge's weight and utylized during the visualization.
-  #NOTE THAT THIS IS QUADRATIC PROCEDURE THAT SHOULD BE OPTYMIZED!!
+  #as the edge's weight and utilized during the visualization.
+  #NOTE THAT THIS IS QUADRATIC PROCEDURE THAT SHOULD BE OPTIMIZED!!
   unique_from = vector()
   unique_to = vector()
   strength_of_edges = vector()
@@ -169,6 +168,26 @@ BallMapper <- function( points , values , epsilon )
   return(return_list)
 }#BallMapper
 
+
+## driver code
+df <- read.csv("data/boston.csv", header = FALSE)
+values <- (df$V14)
+points <- subset(df, select = -V14)
+
+tot <- 0
+num_it = 1
+for(it in 1:num_it) {
+    st<-proc.time()
+    epsilon <- 100
+    l <- BallMapper(points, values, epsilon)
+    en <- proc.time()
+    print(paste("time taken by original ball mapper = ", en-st))
+    tot <- tot + en-st
+}
+
+
+ColorIgraphPlot(l)
+# print(paste("time taken by original ball mapper = ", tot/num_it))
 
 #'Produce a static color visualization of the Ball Mapper graph. It is based on the output from BallMapper function.
 #'
