@@ -3,7 +3,7 @@ __pycache__/
 *.py[cod]
 *$py.class
 
-apikey.txt
+*/api_key.txt
 
 # C extensions
 *.so
