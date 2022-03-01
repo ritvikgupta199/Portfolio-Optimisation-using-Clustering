@@ -22,8 +22,11 @@ library(stringr)
 #' epsilon <- 0.25
 #' l <- BallMapper(points,values,epsilon)
 #' @export
+
+tim <- vector()
 BallMapper <- function( points , values , epsilon )
 {
+  tim <<- c(tim, proc.time())
   #First we create an array of the same length as the collection of points. We will store here the numbers of landmarks that cover every given point.
   coverage <-  list()
   for ( i in 1:length(points[,1]))
@@ -60,6 +63,7 @@ BallMapper <- function( points , values , epsilon )
   }
   #To balance the last additional increment.
   number_of_landmark <- number_of_landmark-1
+  tim <<- c(tim, proc.time())
 
   #Over here we compute the list of elements which are covered by the following landmarks:
   points_covered_by_landmarks <-  list()
@@ -96,6 +100,7 @@ BallMapper <- function( points , values , epsilon )
     average_function_value <- average_function_value/length(points_covered_by_landmarks[[i]])
     coloring[i] <- average_function_value
   }
+  tim <<- c(tim, proc.time())
 
   #Here we create the edges with weights:
   from = vector()
@@ -212,6 +217,8 @@ BallMapper <- function( points , values , epsilon )
 		first_not_counted_edge = first_not_counted_edge_new
   }
   links = cbind(unique_from,unique_to)
+  tim <<- c(tim, proc.time())
+
 	# for(i in 1:length(unique_from)) {
 	# 	print(paste(unique_from[i], unique_to[i], strength_of_edges[i]))
 	# }
@@ -240,9 +247,11 @@ for(it in 1:num_it) {
     tot <- tot + en-st
 }
 
-
+# for(i in 1:length(tim)) {
+#   print(paste(tim[[i]]))
+# }
 ColorIgraphPlot(l)
-print(paste("total time taken by new ball mapper = ", (tot/num_it)))
+# print(paste("total time taken by new ball mapper = ", (tot/num_it)))
 
 #'Produce a static color visualization of the Ball Mapper graph. It is based on the output from BallMapper function.
 #'
