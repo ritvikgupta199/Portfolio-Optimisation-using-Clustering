@@ -22,9 +22,13 @@ def get_data(function, ticker):
 
 
 f = open(TICKER_LIST, 'r')
-for line in tqdm(f.readlines()[:10]):
+for line in tqdm(f.readlines()):
     ticker = line.strip()
     filename = os.path.join(path, ticker + '.json')
+    if os.path.exists(filename):
+        data = json.load(open(filename, 'r'))
+        if len(data.keys()) != 1:
+            continue
     data = get_data(FUNCTION, ticker)
     json.dump(data, open(filename, 'w'), indent=4)
     time.sleep(12)
