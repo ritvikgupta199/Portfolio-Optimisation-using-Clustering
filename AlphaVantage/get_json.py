@@ -7,7 +7,7 @@ import json
 API_KEY = open('api_key.txt', 'r').readlines()[0].strip()
 DIR = '../data/'
 TICKER_LIST = '../snp500sym.csv'
-FUNCTION = 'INCOME_STATEMENT'
+FUNCTION = 'EARNINGS'
 
 path = os.path.join(DIR, FUNCTION)
 
