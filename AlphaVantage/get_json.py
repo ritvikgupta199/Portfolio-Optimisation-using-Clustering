@@ -7,7 +7,7 @@ import json
 API_KEY = open('api_key.txt', 'r').readlines()[0].strip()
 DIR = '../data/'
 TICKER_LIST = '../snp500sym.csv'
-FUNCTION = 'CASH_FLOW'
+FUNCTION = 'TIME_SERIES_DAILY'
 
 path = os.path.join(DIR, FUNCTION)
 
@@ -16,7 +16,7 @@ if not os.path.exists(path):
     print(f'Created directory {path}')
 
 def get_data(function, ticker):
-    url = f'https://www.alphavantage.co/query?function={function}&symbol={ticker}&apikey={API_KEY}'
+    url = f'https://www.alphavantage.co/query?function={function}&symbol={ticker}&outputsize=full&apikey={API_KEY}'
     r = requests.get(url)
     return r.json()
 
