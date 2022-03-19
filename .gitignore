@@ -6,6 +6,7 @@ __pycache__/
 */api_key.txt
 
 data/TIME_SERIES_DAILY/*
+data/MACD_data/*
 
 # C extensions
 *.so
