@@ -2,6 +2,7 @@ library(igraph)
 library(scales)
 library(networkD3)
 library(stringr)
+library(dplyr)
 
 #'Create vertices and edges (with additional properties) of a Ball Mapper graph representation of the input data. Please be aware that the program will not perform any normalization on the data. As with cluster analysis we recommend that you consider whether to normalize the data prior to running the function.
 #'
@@ -176,25 +177,7 @@ BallMapper <- function( points , values , epsilon )
 }#BallMapper
 
 
-## driver code
-df <- read.csv("data/boston.csv", header = FALSE)
-values <- (df$V14)
-points <- subset(df, select = -V14)
 
-tot <- 0
-num_it = 1
-for(it in 1:num_it) {
-    st<-proc.time()
-    epsilon <- 80
-    l <- BallMapper(points, values, epsilon)
-    en <- proc.time()
-    # print(paste("time taken by original ball mapper = ", en-st))
-    tot <- tot + en-st
-}
-
-
-ColorIgraphPlot(l)
-# print(paste("total time taken by original ball mapper = ", (tot/num_it)))
 
 #'Produce a static color visualization of the Ball Mapper graph. It is based on the output from BallMapper function.
 #'
@@ -216,9 +199,9 @@ ColorIgraphPlot(l)
 #' values <- as.data.frame( sin(var) )
 #' epsilon <- 0.25
 #' l <- BallMapper(points,values,epsilon)
-#' ColorIgraphPlot(l)
+#' colplot(l)
 #' @export
-ColorIgraphPlot <- function( outputFromBallMapper, showVertexLabels = TRUE , showLegend = FALSE , minimal_ball_radius = 7 , maximal_ball_scale=20, maximal_color_scale=10 , seed_for_plotting = -1 , store_in_file = "" , default_x_image_resolution = 512 , default_y_image_resolution = 512 , number_of_colors = 100)
+colplot <- function( outputFromBallMapper, showVertexLabels = TRUE , showLegend = FALSE , minimal_ball_radius = 7 , maximal_ball_scale=20, maximal_color_scale=10 , seed_for_plotting = -1 , store_in_file = "" , default_x_image_resolution = 512 , default_y_image_resolution = 512 , number_of_colors = 100)
 {
   vertices = outputFromBallMapper$vertices
   vertices[,2] <- maximal_ball_scale*vertices[,2]/max(vertices[,2])+minimal_ball_radius
@@ -252,7 +235,7 @@ ColorIgraphPlot <- function( outputFromBallMapper, showVertexLabels = TRUE , sho
 
   if ( store_in_file != "" )grDevices::dev.off()
 
-}#ColorIgraphPlot
+}#colplot
 
 
 #'Produce a static grayscale visualization of the Ball Mapper graph. It is based on the output from the BallMapper function.
@@ -342,15 +325,15 @@ pointToBallList <- function( coverageFromBallMapper )
 #' values <- as.data.frame( sin(var) )
 #' epsilon <- 0.25
 #' l <- BallMapper(points,values,epsilon)
-#' simpleDynamicNetwork(l)
+#' simdynet(l)
 #' @export
-simpleDynamicNetwork <- function( outputFromBallMapper , storeAsHtml = FALSE   )
+simdynet <- function( outputFromBallMapper , storeAsHtml = FALSE   )
 {
   networkData <- data.frame(outputFromBallMapper$edges-1)
   sn <- networkD3::simpleNetwork(networkData,zoom=T)
   methods::show(sn)
   if ( storeAsHtml == TRUE )networkD3::saveNetwork(file = 'Net1.html')
-}#simpleDynamicNetwork
+}#simdynet
 
 #'This procedure produces a dynamic graph with colors. It allows zoom-in operation and displays information about vertices when they are clicked upon.
 #'
@@ -442,7 +425,7 @@ colorByAllVariables<- function( outputFromBallMapper , points , fileNamePrefix =
     filename_ <- cbind( fileNamePrefix , toString(i) , ".png" )
     filename <- stringr::str_c( filename_ , collapse = "")
 
-    ColorIgraphPlot(outputFromBallMapper, seed_for_plotting = 123 , store_in_file = filename , default_x_image_resolution = defaultXResolution  , default_y_image_resolution = defaultYResolution)
+    colplot(outputFromBallMapper, seed_for_plotting = 123 , store_in_file = filename , default_x_image_resolution = defaultXResolution  , default_y_image_resolution = defaultYResolution)
     #GrayscaleIgraphPlot(outputFromBallMapper, seed_for_plotting = 123 , store_in_file = filename , default_image_resolution = defaultResolution)
   }
   outputFromBallMapper$coloring <- oldColoring;
@@ -520,6 +503,7 @@ points_covered_by_landmarks <- function( outputFromBallMapper , numbers_of_landm
   #sort all_vertices and remove repetitions.
   all_vertices <- base::sort( all_vertices )
   all_vertices <- base::rle(all_vertices )$val
+  return (all_vertices)
 }#points_covered_by_landmarks
 
 
@@ -645,9 +629,9 @@ find_dominant_difference_using_averages_normalized_by_sd <- function( points , s
 #' pts <- as.data.frame(points_covered_by_landmarks(l,1))
 #' new_coloring_function <- color_by_distance_to_reference_points( points, pts )
 #' l$coloring <- new_coloring_function[,1]
-#' ColorIgraphPlot(l)
+#' colplot(l)
 #' l$coloring <- new_coloring_function[,2]
-#' ColorIgraphPlot(l)
+#' colplot(l)
 #' @export
 color_by_distance_to_reference_points <- function( allPoints , refPoints )
 {
@@ -736,9 +720,9 @@ storeBallMapperGraphInFile <- function( outputFromBallMapper , filename = "BM_gr
 #' values <- as.data.frame(sin(var))
 #' l <- BallMapper(points, values, 0.25)
 #' storeBallMapperGraphInFile(l,"my_favorite_BM_graph")
-#' l_prime <- readBallMapperGraphFromFile("my_favorite_BM_graph")
+#' l_prime <- readbm("my_favorite_BM_graph")
 #' @export
-readBallMapperGraphFromFile <- function( filename )
+readbm <- function( filename )
 {
    vertices <- utils::read.table( file = base::paste(filename,"_vertices",sep="") )
    colnames( vertices ) <- c( "id" , "size" )
@@ -785,7 +769,7 @@ readBallMapperGraphFromFile <- function( filename )
                         "coverage" = coverage )
 
    return(return_list)
-}#readBallMapperGraphFromFile
+}#readbm
 
 
 
@@ -799,10 +783,10 @@ readBallMapperGraphFromFile <- function( filename )
 #' points <- as.data.frame( cbind( sin(var),cos(var) ) )
 #' values <- as.data.frame(sin(var))
 #' l <- BallMapper(points, values, 0.25)
-#' ColorIgraphPlot(l)
+#' colplot(l)
 #' new_coloring <- colorByAverageValueOfOtherVariable(l,cos(var))
 #' l$coloring <- new_coloring
-#' ColorIgraphPlot(l)
+#' colplot(l)
 #'@export
 colorByAverageValueOfOtherVariable<- function( outputFromBallMapper , newFunctionOnPoints )
 {
@@ -836,10 +820,10 @@ colorByAverageValueOfOtherVariable<- function( outputFromBallMapper , newFunctio
 #' points <- as.data.frame( cbind( sin(var),cos(var) ) )
 #' values <- as.data.frame(sin(var))
 #' l <- BallMapper(points, values, 0.25)
-#' ColorIgraphPlot(l)
+#' colplot(l)
 #' new_coloring <- colorByStDevValueOfOtherVariable(l,sin(var))
 #' l$coloring <- new_coloring
-#' ColorIgraphPlot(l)
+#' colplot(l)
 #'@export
 colorByStDevValueOfOtherVariable<- function( outputFromBallMapper , newFunctionOnPoints )
 {
@@ -857,3 +841,38 @@ colorByStDevValueOfOtherVariable<- function( outputFromBallMapper , newFunctionO
   }
   return(newColoring)
 }#colorByStDevValueOfOtherVariable
+
+
+# ############################ driver code ############################
+# df <- read.csv("./data/QuarterlyRatiosCleanNormalised/2017_Q1.csv", header = TRUE)
+# values <- (df$at)
+# points <- subset(df, select = -V14)
+# points <- select(df, roa, at)
+# points <- df(select(roa, asset_turnover)) #(df$roa,asset_turnover)
+
+# l <- BallMapper(points, values, 0.5)
+# simdynet(l)
+
+# no_of_landmarks = length( unlist(l['landmarks']) )
+# print(paste(unlist(l['landmarks'])))
+# print(paste(no_of_landmarks))
+# it = 0
+# for (i in unlist(l['landmarks'])) {
+#   it = it+1
+#   print(paste("no ", it-1))
+#   pts <- points_covered_by_landmarks(l, it)
+#   print(paste(pts))
+# }
+
+# tot <- 0
+# num_it = 1
+# for(it in 1:num_it) {
+#     st<-proc.time()
+#     epsilon <- 80
+#     l <- BallMapper(points, values, epsilon)
+#     en <- proc.time()
+#     # print(paste("time taken by original ball mapper = ", en-st))
+#     tot <- tot + en-st
+# }
+# colplot(l)
+# print(paste("total time taken by original ball mapper = ", (tot/num_it)))
