@@ -8,7 +8,7 @@ from pypfopt import risk_models
 from pypfopt import expected_returns
 
 
-PRICES = '../prices.csv'
+PRICES = '../data/prices/prices_2020q2.csv'
 TICKER_FILE = 'tickers/tickers.csv'
 tickers = [ticker.strip() for ticker in open(TICKER_FILE, 'r').readlines()]
 
