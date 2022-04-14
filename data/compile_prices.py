@@ -9,8 +9,6 @@ while symline:
     syms.append(symline.strip())
     symline = symfile.readline()
 
-# syms = syms[:3]
-
 for sym in syms:
     prices.append([])
     try:
@@ -37,6 +35,6 @@ for i in range(len(dates)):
     f.write(dates[i]+',')
     for j in range(len(prices)):
         if i >= len(prices[j]):
-            continue
+            prices[j].append("")
         f.write(str(prices[j][i])+',')
     f.write('\n')
