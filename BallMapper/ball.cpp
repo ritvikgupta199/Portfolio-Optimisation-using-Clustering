@@ -236,7 +236,7 @@ vector<long double> csvlinetolist(string csvline) {
 int main(int argc, char** argv){   
 
     Nos;
-    long double eps = 0.5;
+    long double eps = 0.3;
     if(argc == 3) {
         string year, qtr;
         year = argv[1];
