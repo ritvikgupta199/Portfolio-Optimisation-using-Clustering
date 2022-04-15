@@ -7,7 +7,7 @@ import matplotlib.dates as mdates
 import os
 
 PF_AMOUNT = 10000
-EVAL_PRICES = '../data/prices/prices_2019q1.csv'
+EVAL_PRICES = '../data/prices/prices_2021q2.csv'
 PORTFOLIO = 'portfolios/portfolio.csv'
 tickers = []
 pf_wts = {}

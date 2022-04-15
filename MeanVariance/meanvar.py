@@ -10,13 +10,15 @@ from pypfopt import expected_returns
 
 
 PF_AMOUNT = 10000
-PRICES = '../data/prices/prices_2018q4.csv'
-TICKER_FILE = 'tickers/tickers_ind.csv'
+PRICES = '../data/prices/prices_2021q1.csv'
+TICKER_FILE = '../bm_landmarks'
 SNP_LIST = '../snp500sym.csv'
 PORTFOLIO = 'portfolios/portfolio.csv'
 
 snp_list = open(SNP_LIST, 'r').readlines()
-tickers = [snp_list[int(ticker)-1].strip() for ticker in open(TICKER_FILE, 'r').readlines()]
+tickers = [snp_list[int(ticker)-1].strip() for ticker in np.arange(201, 301)]
+# print(tickers)
+# tickers = [snp_list[int(ticker)-1].strip() for ticker in open(TICKER_FILE, 'r').readlines()]
 
 prices_df = pd.read_csv(PRICES)
 prices_df = prices_df.set_index('Date')
