@@ -13,6 +13,8 @@ PF_AMOUNT = 10000
 PRICES = '../data/prices/prices_2018q4.csv'
 TICKER_FILE = 'tickers/tickers_ind.csv'
 SNP_LIST = '../snp500sym.csv'
+PORTFOLIO = 'portfolios/portfolio.csv'
+
 snp_list = open(SNP_LIST, 'r').readlines()
 tickers = [snp_list[int(ticker)-1].strip() for ticker in open(TICKER_FILE, 'r').readlines()]
 
@@ -26,16 +28,10 @@ sigma = risk_models.sample_cov(prices_df)
 ef = EfficientFrontier(mu, sigma, weight_bounds=(0,1))
 sharpe_pfolio=ef.min_volatility()
 sharpe_pwt=ef.clean_weights()
-print(f'The weights for min volatility are {sharpe_pwt}')
 
-latest_prices = prices_df.loc[prices_df.index.max()]
-print(latest_prices)
-
-allocation = {}
+print('The weights are as follows:')
+fw = open(PORTFOLIO, 'w')
 for idx, wt in sharpe_pwt.items():
-    allocation[idx] = (wt * PF_AMOUNT) / latest_prices[idx]
-
-print('The allocation is as follows:')
-for key, val in allocation.items():
-    print(f'{key}, {val}')
+    print(f'{idx}, {wt}')
+    fw.write(f'{idx}, {wt}\n')
 

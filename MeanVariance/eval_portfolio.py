@@ -10,17 +10,22 @@ PF_AMOUNT = 10000
 EVAL_PRICES = '../data/prices/prices_2019q1.csv'
 PORTFOLIO = 'portfolios/portfolio.csv'
 tickers = []
-pf_dict = {}
+pf_wts = {}
 fr = open(PORTFOLIO, 'r')
 for line in fr.readlines():
     tokens = line.split(',')
     tickers.append(tokens[0].strip())
-    pf_dict[tokens[0]] = float(tokens[1])
+    pf_wts[tokens[0]] = float(tokens[1])
 
 prices_df = pd.read_csv(EVAL_PRICES)
 prices_df = prices_df.set_index('Date')
 prices_df = prices_df.sort_index(ascending=True)
 prices_df = prices_df[tickers]
+
+latest_prices = prices_df.loc[prices_df.index.min()]
+pf_alloc = {}
+for idx, wt in pf_wts.items():
+    pf_alloc[idx] = (wt * PF_AMOUNT) / latest_prices[idx]
 
 sp500_df = web.DataReader('sp500', start = prices_df.index.min(), end = prices_df.index.max(), data_source='fred')
 sp500_qt = PF_AMOUNT / sp500_df.loc[prices_df.index.min()]['sp500']
@@ -30,7 +35,7 @@ for idx, row in prices_df.iterrows():
     dates.append(idx)
     val = 0
     for ticker in tickers:
-        val += row[ticker] * pf_dict[ticker]
+        val += row[ticker] * pf_alloc[ticker]
     val_pf.append(val)
     val_sp.append(sp500_df.loc[idx]['sp500']*sp500_qt)
 
