@@ -10,7 +10,9 @@ from pypfopt import expected_returns
 
 PRICES = '../data/prices/prices_2020q2.csv'
 TICKER_FILE = 'tickers/tickers.csv'
-tickers = [ticker.strip() for ticker in open(TICKER_FILE, 'r').readlines()]
+SNP_LIST = '../snp500sym.csv'
+snp_list = open(SNP_LIST, 'r').readlines()
+tickers = [snp_list[int(ticker)-1].strip() for ticker in open(TICKER_FILE, 'r').readlines()]
 
 prices_df = pd.read_csv(PRICES)
 prices_df = prices_df.set_index('Date')
