@@ -1,11 +1,13 @@
+from turtle import color
 import numpy as np
 import pandas as pd
 import pandas_datareader as web
 import matplotlib.pyplot as plt
+import matplotlib.dates as mdates
 import os
 
-PF_COST = 10000
-EVAL_PRICES = '../data/prices/prices_2020q3.csv'
+PF_AMOUNT = 10000
+EVAL_PRICES = '../data/prices/prices_2019q1.csv'
 PORTFOLIO = 'portfolios/portfolio.csv'
 tickers = []
 pf_dict = {}
@@ -17,20 +19,32 @@ for line in fr.readlines():
 
 prices_df = pd.read_csv(EVAL_PRICES)
 prices_df = prices_df.set_index('Date')
+prices_df = prices_df.sort_index(ascending=True)
 prices_df = prices_df[tickers]
 
 sp500_df = web.DataReader('sp500', start = prices_df.index.min(), end = prices_df.index.max(), data_source='fred')
-sp500_qt = PF_COST / sp500_df.loc[prices_df.index.max()]['sp500']
+sp500_qt = PF_AMOUNT / sp500_df.loc[prices_df.index.min()]['sp500']
 
-val_x, val_pf, val_sp = [], [], []
+dates, val_pf, val_sp = [], [], []
 for idx, row in prices_df.iterrows():
-    val_x.append(idx)
+    dates.append(idx)
     val = 0
     for ticker in tickers:
         val += row[ticker] * pf_dict[ticker]
     val_pf.append(val)
     val_sp.append(sp500_df.loc[idx]['sp500']*sp500_qt)
 
-plt.plot(val_x, val_pf)
-plt.plot(val_x, val_sp)
+
+fig, ax = plt.subplots(figsize=(8, 6))
+ax.xaxis.set_major_locator(mdates.MonthLocator(interval=1))
+ax.xaxis.set_minor_locator(mdates.DayLocator(interval=1))
+
+ax.plot(dates, val_pf, color='red', label='Portfolio')
+ax.plot(dates, val_sp, color='blue', label='S&P500 Index')
+
+ax.set_xlabel("Date")
+ax.set_ylabel("Value of Portfolio")
+ax.set_title("Portfolio vs S&P500 Index")
+ax.legend()
+
 plt.show()
