@@ -236,6 +236,7 @@ vector<long double> csvlinetolist(string csvline) {
 int main(int argc, char** argv){   
 
     Nos;
+    long double eps = 0.5;
     if(argc == 3) {
         string year, qtr;
         year = argv[1];
@@ -243,8 +244,16 @@ int main(int argc, char** argv){
         string inputfilename =  "../data/QuarterlyRatiosCleanNormalised/" + year + "_Q" + qtr + ".csv";
         cerr << inputfilename << endl;
         freopen(inputfilename.c_str(), "r", stdin);
+    } else if(argc == 4) {
+        string year, qtr;
+        year = argv[1];
+        qtr = argv[2];
+        cin >> eps;
+        string inputfilename =  "../data/QuarterlyRatiosCleanNormalised/" + year + "_Q" + qtr + ".csv";
+        cerr << inputfilename << endl;
+        freopen(inputfilename.c_str(), "r", stdin);
     } else {
-        cerr << "ABORT! " << argc << " ";
+        cerr << "BAD INPUT: " << argc << " going with 2017 Q1";
         freopen("../data/QuarterlyRatiosCleanNormalised/2017_Q1.csv", "r", stdin);
     }
     // cout << fixed << setprecision(25);
@@ -260,29 +269,34 @@ int main(int argc, char** argv){
         vector<long double> tmp = csvlinetolist(line);
         struct pt p;
         p.n = 0;
-        // cerr << pts.size()+1 << " ";
         for(auto u: tmp) {
-            // cerr << u << " ";
             p.c.push_back(u);
             p.n++;
         }
-        // cerr << ln;
+        // remove last one, put in val
+        p.n--;
+        p.c.pop_back();
         pts.push_back(p);
         val.push_back(tmp.back());
     }
-    cerr << val.size() << " " << pts.size() << ln;
-
-    // val.assign(n,0);
-    // fo(i,n) {
-    //     struct pt po;
-    //     po.n = m-1;
-    //     po.c.assign(m-1, 0);
-    //     fo(j,m-1) {
-    //         cin >> po.c[j];
+    // while(getline(cin, line)) {
+    //     vector<long double> tmp = csvlinetolist(line);
+    //     struct pt p;
+    //     p.n = 0;
+    //     for(auto u: tmp) {
+    //         // cerr << u << " ";
+    //         p.c.push_back(u);
+    //         p.n++;
     //     }
-    //     cin >> val[i];
+    //     // cerr << ln;
+    //     // remove last one, put in val
+    //     p.n--;
+    //     swap(p.c[1], p.c[2]);
+    //     val.push_back(p.c[2]);
+    //     p.c.pop_back();
+    //     pts.push_back(p);
     // }
-    long double eps = 0.1;
+    cerr << val.size() << " " << pts.size() << ln;
     ball b = ballmap(pts, val, eps);
 
     balltofile(b);
