@@ -33,7 +33,7 @@ parser.add_argument('--quarter', type=int, help='Quarter')
 
 args = parser.parse_args()
 
-PRICES = '../data/prices/prices_' + str(args.YEAR) + 'q' + str(args.QTR) + '.csv'
+PRICES = '../data/prices/prices_' + str(args.year) + 'q' + str(args.quarter) + '.csv'
 TICKER_FILE = 'portfolios/portfolio_shortlist.csv'
 SNP_LIST = '../snp500sym.csv'
 PORTFOLIO_BM = 'portfolios/portfolio_bm.csv'

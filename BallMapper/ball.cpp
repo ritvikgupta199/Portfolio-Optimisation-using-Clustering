@@ -236,7 +236,7 @@ vector<long double> csvlinetolist(string csvline) {
 int main(int argc, char** argv){   
 
     Nos;
-    long double eps = 0.3;
+    long double eps = 0.5;
     if(argc == 3) {
         string year, qtr;
         year = argv[1];
@@ -248,7 +248,7 @@ int main(int argc, char** argv){
         string year, qtr;
         year = argv[1];
         qtr = argv[2];
-        cin >> eps;
+        eps = stod(argv[3]);
         string inputfilename =  "../data/QuarterlyRatiosCleanNormalised/" + year + "_Q" + qtr + ".csv";
         cerr << inputfilename << endl;
         freopen(inputfilename.c_str(), "r", stdin);

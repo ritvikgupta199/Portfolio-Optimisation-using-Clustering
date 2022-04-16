@@ -11,10 +11,12 @@ PF_AMOUNT = 10000
 parser = argparse.ArgumentParser('max_sharpe')
 parser.add_argument('--year', type=int, help='Year')
 parser.add_argument('--quarter', type=int, help='Quarter')
+parser.add_argument('--dir', type=str, help='Directory to save the graph in')
+
 
 args = parser.parse_args()
-YEAR = args.YEAR
-QTR = args.QTR
+YEAR = args.year
+QTR = args.quarter
 # increment qtr
 if QTR == 4:
     QTR = 1
@@ -83,4 +85,4 @@ ax.set_ylabel("Value of Portfolio")
 ax.set_title("Portfolio vs S&P500 Index")
 ax.legend()
 
-plt.show()
+plt.savefig(f'../graphs/{args.dir}/{YEAR}_q{QTR}.png')

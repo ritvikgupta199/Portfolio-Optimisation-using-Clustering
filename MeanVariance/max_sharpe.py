@@ -20,13 +20,14 @@ def get_sharpe(ticker, prices_df):
 parser = argparse.ArgumentParser('max_sharpe')
 parser.add_argument('--year', type=int, help='Year')
 parser.add_argument('--quarter', type=int, help='Quarter')
+parser.add_argument('--select_num', type=int, help='No of stocks to select in each cluster')
 
 args = parser.parse_args()
 
-PRICES = '../data/prices/prices_' + str(args.YEAR) + 'q' + str(args.QTR) + '.csv'
+PRICES = '../data/prices/prices_' + str(args.year) + 'q' + str(args.quarter) + '.csv'
 TICKER_FILE = '../bm_points_covered_by_landmarks'
 SNP_LIST = '../snp500sym.csv'
-SELECT_NUM = 5
+SELECT_NUM = args.select_num
 SHORTLIST = 'portfolios/portfolio_shortlist.csv'
 
 prices_df = pd.read_csv(PRICES)
