@@ -2,7 +2,7 @@ from traceback import print_tb
 import numpy as np
 import pandas as pd
 import os
-import vars
+import argparse
 
 from pypfopt.efficient_frontier import EfficientFrontier
 from pypfopt import discrete_allocation
@@ -27,7 +27,13 @@ def write_wts(filename, wts):
     print('\n')
     fw.close()
 
-PRICES = '../data/prices/prices_' + str(vars.YEAR) + 'q' + str(vars.QTR) + '.csv'
+parser = argparse.ArgumentParser('max_sharpe')
+parser.add_argument('--year', type=int, help='Year')
+parser.add_argument('--quarter', type=int, help='Quarter')
+
+args = parser.parse_args()
+
+PRICES = '../data/prices/prices_' + str(args.YEAR) + 'q' + str(args.QTR) + '.csv'
 TICKER_FILE = 'portfolios/portfolio_shortlist.csv'
 SNP_LIST = '../snp500sym.csv'
 PORTFOLIO_BM = 'portfolios/portfolio_bm.csv'

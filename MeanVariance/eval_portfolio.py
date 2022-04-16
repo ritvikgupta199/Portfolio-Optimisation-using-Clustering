@@ -4,11 +4,17 @@ import pandas_datareader as web
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 import os
-import vars
+import argparse
 
 PF_AMOUNT = 10000
-YEAR = vars.YEAR
-QTR = vars.QTR
+
+parser = argparse.ArgumentParser('max_sharpe')
+parser.add_argument('--year', type=int, help='Year')
+parser.add_argument('--quarter', type=int, help='Quarter')
+
+args = parser.parse_args()
+YEAR = args.YEAR
+QTR = args.QTR
 # increment qtr
 if QTR == 4:
     QTR = 1

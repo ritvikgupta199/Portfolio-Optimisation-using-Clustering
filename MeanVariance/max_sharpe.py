@@ -3,7 +3,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 import os
-import vars
+import argparse
 
 def get_sharpe(ticker, prices_df):
     prices = prices_df[ticker]
@@ -17,7 +17,13 @@ def get_sharpe(ticker, prices_df):
     return annual_sharpe
 
 
-PRICES = '../data/prices/prices_' + str(vars.YEAR) + 'q' + str(vars.QTR) + '.csv'
+parser = argparse.ArgumentParser('max_sharpe')
+parser.add_argument('--year', type=int, help='Year')
+parser.add_argument('--quarter', type=int, help='Quarter')
+
+args = parser.parse_args()
+
+PRICES = '../data/prices/prices_' + str(args.YEAR) + 'q' + str(args.QTR) + '.csv'
 TICKER_FILE = '../bm_points_covered_by_landmarks'
 SNP_LIST = '../snp500sym.csv'
 SELECT_NUM = 5
