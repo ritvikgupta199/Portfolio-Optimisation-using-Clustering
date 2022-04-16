@@ -30,7 +30,7 @@ def get_value(prices, tickers, pf_alloc):
     return val
 
 PF_AMOUNT = 10000
-EVAL_PRICES = '../data/prices/prices_2021q2.csv'
+EVAL_PRICES = '../data/prices/prices_2019q4.csv'
 PORTFOLIO_BM = 'portfolios/portfolio_bm.csv'
 PORTFOLIO_ALL = 'portfolios/portfolio_all.csv'
 

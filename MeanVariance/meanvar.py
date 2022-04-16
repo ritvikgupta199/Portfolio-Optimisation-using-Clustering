@@ -27,7 +27,7 @@ def write_wts(filename, wts):
     fw.close()
 
 PF_AMOUNT = 10000
-PRICES = '../data/prices/prices_2021q1.csv'
+PRICES = '../data/prices/prices_2019q3.csv'
 TICKER_FILE = '../bm_landmarks'
 SNP_LIST = '../snp500sym.csv'
 PORTFOLIO_BM = 'portfolios/portfolio_bm.csv'
