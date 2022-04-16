@@ -2,6 +2,7 @@ from traceback import print_tb
 import numpy as np
 import pandas as pd
 import os
+import vars
 
 from pypfopt.efficient_frontier import EfficientFrontier
 from pypfopt import discrete_allocation
@@ -26,16 +27,15 @@ def write_wts(filename, wts):
     print('\n')
     fw.close()
 
-PF_AMOUNT = 10000
-PRICES = '../data/prices/prices_2019q3.csv'
-TICKER_FILE = '../bm_landmarks'
+PRICES = '../data/prices/prices_' + str(vars.YEAR) + 'q' + str(vars.QTR) + '.csv'
+TICKER_FILE = 'portfolios/portfolio_shortlist.csv'
 SNP_LIST = '../snp500sym.csv'
 PORTFOLIO_BM = 'portfolios/portfolio_bm.csv'
 PORTFOLIO_ALL = 'portfolios/portfolio_all.csv'
 
 snp_list = open(SNP_LIST, 'r').readlines()
-tickers_all = [snp_list[int(ticker)].strip() for ticker in np.arange(200, 300)]
-tickers_bm = [snp_list[int(ticker)-1].strip() for ticker in open(TICKER_FILE, 'r').readlines()]
+# tickers_all = [snp_list[int(ticker)].strip() for ticker in np.arange(200, 300)]
+tickers_bm = [ticker.strip() for ticker in open(TICKER_FILE, 'r').readlines()]
 
 prices_df = pd.read_csv(PRICES)
 prices_df = prices_df.set_index('Date')
@@ -44,6 +44,6 @@ prices_bm = prices_df[tickers_bm]
 bm_wts = get_mean_var_wts(prices_bm)
 write_wts(PORTFOLIO_BM, bm_wts)
 
-prices_all = prices_df[tickers_all]
-all_wts = get_mean_var_wts(prices_all)
-write_wts(PORTFOLIO_ALL, all_wts)
+# prices_all = prices_df[tickers_all]
+# all_wts = get_mean_var_wts(prices_all)
+# write_wts(PORTFOLIO_ALL, all_wts)

@@ -3,6 +3,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 import os
+import vars
 
 def get_sharpe(ticker, prices_df):
     prices = prices_df[ticker]
@@ -16,10 +17,10 @@ def get_sharpe(ticker, prices_df):
     return annual_sharpe
 
 
-PRICES = '../data/prices/prices_2021q2.csv'
+PRICES = '../data/prices/prices_' + str(vars.YEAR) + 'q' + str(vars.QTR) + '.csv'
 TICKER_FILE = '../bm_points_covered_by_landmarks'
 SNP_LIST = '../snp500sym.csv'
-SELECT_FRAC = 0.1
+SELECT_NUM = 5
 SHORTLIST = 'portfolios/portfolio_shortlist.csv'
 
 prices_df = pd.read_csv(PRICES)
@@ -28,6 +29,7 @@ prices_df = prices_df.sort_index(ascending=True)
 
 snp_list = open(SNP_LIST, 'r').readlines()
 fw = open(SHORTLIST, 'w')
+all_selected = []
 for row in open(TICKER_FILE, 'r').readlines():
     tickers = row.strip().split(' ')
     tickers = [snp_list[int(ticker)-1].strip() for ticker in tickers]
@@ -38,8 +40,10 @@ for row in open(TICKER_FILE, 'r').readlines():
     sharpe_df = sharpe_df.set_index('ticker')
     sharpe_df = sharpe_df.sort_values('sharpe', ascending=False)
     (r, c) = sharpe_df.shape
-    n = int(np.ceil(r * SELECT_FRAC))
-    selected_tickers = sharpe_df.head(n).index.values
-    fw.write(', '.join(selected_tickers) + '\n')
+    selected_tickers = sharpe_df.head(SELECT_NUM).index.values
+    all_selected.extend(selected_tickers)
+    # selected_tickers = list(set(selected_tickers))
+all_selected = list(set(all_selected))
+fw.write('\n'.join(all_selected) + '\n')
 fw.close()
 

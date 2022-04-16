@@ -4,6 +4,20 @@ import pandas_datareader as web
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 import os
+import vars
+
+PF_AMOUNT = 10000
+YEAR = vars.YEAR
+QTR = vars.QTR
+# increment qtr
+if QTR == 4:
+    QTR = 1
+    YEAR += 1
+else:
+    QTR += 1
+EVAL_PRICES = '../data/prices/prices_' + str(YEAR) + 'q' + str(QTR) + '.csv'
+PORTFOLIO_BM = 'portfolios/portfolio_bm.csv'
+PORTFOLIO_ALL = 'portfolios/portfolio_all.csv'
 
 def get_tickers_wts(filename):
     tickers = []
@@ -29,12 +43,8 @@ def get_value(prices, tickers, pf_alloc):
         val += prices[ticker] * pf_alloc[ticker]
     return val
 
-PF_AMOUNT = 10000
-EVAL_PRICES = '../data/prices/prices_2019q4.csv'
-PORTFOLIO_BM = 'portfolios/portfolio_bm.csv'
-PORTFOLIO_ALL = 'portfolios/portfolio_all.csv'
-
 tickers_bm, bm_wts = get_tickers_wts(PORTFOLIO_BM)
+print(bm_wts)
 tickers_all, all_wts = get_tickers_wts(PORTFOLIO_ALL)
 
 prices_df = pd.read_csv(EVAL_PRICES)
@@ -59,7 +69,7 @@ ax.xaxis.set_major_locator(mdates.MonthLocator(interval=1))
 ax.xaxis.set_minor_locator(mdates.DayLocator(interval=1))
 
 ax.plot(dates, val_bm, color='green', label='Portfolio using BM')
-ax.plot(dates, val_all, color='red', label='Portfolio using All')
+# ax.plot(dates, val_all, color='red', label='Portfolio using All')
 ax.plot(dates, val_sp, color='blue', label='S&P500 Index')
 
 ax.set_xlabel("Date")
