@@ -17,12 +17,29 @@ def get_sharpe(ticker, prices_df):
 
 
 PRICES = '../data/prices/prices_2021q2.csv'
+TICKER_FILE = '../bm_points_covered_by_landmarks'
+SNP_LIST = '../snp500sym.csv'
+SELECT_FRAC = 0.1
+SHORTLIST = 'portfolios/portfolio_shortlist.csv'
 
 prices_df = pd.read_csv(PRICES)
 prices_df = prices_df.set_index('Date')
 prices_df = prices_df.sort_index(ascending=True)
-print(prices_df.head())
 
-ticker = 'MMM'
-sharpe = get_sharpe(ticker, prices_df[ticker])
+snp_list = open(SNP_LIST, 'r').readlines()
+fw = open(SHORTLIST, 'w')
+for row in open(TICKER_FILE, 'r').readlines():
+    tickers = row.strip().split(' ')
+    tickers = [snp_list[int(ticker)-1].strip() for ticker in tickers]
+    sharpe_dict = {}
+    for ticker in tickers:
+        sharpe_dict[ticker] = get_sharpe(ticker, pd.read_csv(PRICES))
+    sharpe_df = pd.DataFrame(pd.DataFrame([{'ticker': k, 'sharpe': v} for k, v in sharpe_dict.items()]))
+    sharpe_df = sharpe_df.set_index('ticker')
+    sharpe_df = sharpe_df.sort_values('sharpe', ascending=False)
+    (r, c) = sharpe_df.shape
+    n = int(np.ceil(r * SELECT_FRAC))
+    selected_tickers = sharpe_df.head(n).index.values
+    fw.write(', '.join(selected_tickers) + '\n')
+fw.close()
 
