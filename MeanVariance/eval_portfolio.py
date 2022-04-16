@@ -18,11 +18,9 @@ args = parser.parse_args()
 YEAR = args.year
 QTR = args.quarter
 # increment qtr
-if QTR == 4:
-    QTR = 1
-    YEAR += 1
-else:
-    QTR += 1
+YEAR = YEAR + 1 if QTR == 4 else YEAR
+QTR = 1 if QTR == 4 else QTR + 1
+
 EVAL_PRICES = '../data/prices/prices_' + str(YEAR) + 'q' + str(QTR) + '.csv'
 PORTFOLIO_BM = 'portfolios/portfolio_bm.csv'
 PORTFOLIO_ALL = 'portfolios/portfolio_all.csv'
