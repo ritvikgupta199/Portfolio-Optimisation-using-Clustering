@@ -51,7 +51,7 @@ prices_df = pd.read_csv(PRICES)
 prices_df = prices_df.set_index('Date')
 
 prices_bm = prices_df[tickers_bm]
-bm_wts = get_mean_var_wts(prices_bm)
+bm_wts = get_mean_var_wts(prices_bm, args.model)
 write_wts(PORTFOLIO_BM, bm_wts)
 
 # prices_all = prices_df[tickers_all]
