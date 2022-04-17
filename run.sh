@@ -1,7 +1,9 @@
 YEAR=2018
 QTR=1
-SELECT_NUM=2
-EPS=0.2
+SELECT_NUM=10
+EPS=0.3
+# MODEL="max_sharpe"
+Model="min_vol"
 DIR=select_"$SELECT_NUM"_eps_"$EPS"
 
 mkdir -p graphs/"$DIR"
@@ -12,5 +14,5 @@ g++ ball.cpp -o ball
 cd ..
 cd MeanVariance
 python3 max_sharpe.py --year $YEAR --quarter $QTR --select_num $SELECT_NUM
-python3 meanvar.py --year $YEAR --quarter $QTR
-python3 eval_portfolio.py --year $YEAR --quarter $QTR --dir $DIR
+python3 meanvar.py --year $YEAR --quarter $QTR --model $MODEL
+python3 eval_portfolio.py --year $YEAR --quarter $QTR --dir $DIR --model $MODEL
