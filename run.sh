@@ -3,7 +3,7 @@ QTR=1
 SELECT_NUM=10
 EPS=0.3
 # MODEL="max_sharpe"
-Model="min_vol"
+MODEL="min_vol"
 DIR=select_"$SELECT_NUM"_eps_"$EPS"
 
 mkdir -p graphs/"$DIR"
