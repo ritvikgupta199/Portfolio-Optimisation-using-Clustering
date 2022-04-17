@@ -1,7 +1,7 @@
 YEAR=2018
 QTR=1
-SELECT_NUM=10
-EPS=0.3
+SELECT_NUM=2
+EPS=0.2
 # MODEL="max_sharpe"
 MODEL="min_vol"
 DIR=select_"$SELECT_NUM"_eps_"$EPS"
