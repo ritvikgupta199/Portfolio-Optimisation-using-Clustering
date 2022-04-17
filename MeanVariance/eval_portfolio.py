@@ -81,7 +81,7 @@ ax.plot(dates, val_sp, color='blue', label='S&P500 Index')
 
 ax.set_xlabel("Date")
 ax.set_ylabel("Value of Portfolio")
-ax.set_title(f"Portfolio vs S&P500 Index ({args.model})")
+ax.set_title(f"Portfolio vs S&P500 Index for {YEAR} Q{QTR} ({args.model})")
 ax.legend()
 
 plt.savefig(f'../graphs/{args.dir}/{YEAR}_q{QTR}_{args.model}.png')
