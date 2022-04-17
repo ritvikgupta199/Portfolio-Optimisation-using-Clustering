@@ -667,7 +667,7 @@ color_by_distance_to_reference_points <- function( allPoints , refPoints )
 #' l <- BallMapper(points, values, 0.25)
 #' storeBallMapperGraphInFile(l,"my_favorite_BM_graph")
 #'@export
-storeBallMapperGraphInFile <- function( outputFromBallMapper , filename = "BM_graph" )
+writebm <- function( outputFromBallMapper , filename = "BM_graph" )
 {
   #Writing vertices
   utils::write.table( outputFromBallMapper$vertices , file =paste(filename,"_vertices",sep=""), col.names = F, row.names = F)
@@ -864,7 +864,7 @@ colorByStDevValueOfOtherVariable<- function( outputFromBallMapper , newFunctionO
 #   print(paste(pts))
 # }
 
-df <- read.csv("./BallMapper/data/boston.csv", header = FALSE)
+df <- read.csv("./BallMapper/data/boston copy 2.csv", header = FALSE)
 # df <- read.csv("./BallMapper/data/rand.csv", header = FALSE)
 values <- (df$V14)
 points <- subset(df, select = -V14)
@@ -879,5 +879,5 @@ for(it in 1:num_it) {
     # print(paste("time taken by original ball mapper = ", en-st))
     tot <- tot + en-st
 }
-colplot(l)
+# colplot(l)
 print(paste("total time taken by original ball mapper = ", (tot/num_it)))

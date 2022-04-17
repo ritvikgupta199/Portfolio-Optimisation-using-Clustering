@@ -92,7 +92,6 @@ double dist(struct pt a, struct pt b) {
     for(int i = 0;i < a.n;i++) {
         dis += (a.c[i] - b.c[i]) * (a.c[i] - b.c[i]);
     }
-    dis = dis/(double)a.n;
     dis = sqrt(dis);
     return dis;
 }
