@@ -90,13 +90,14 @@ struct ball {
 };
 
 long double dist(struct pt a, struct pt b) {
+    // assert(a.n==b.n);
     if(a.n != b.n) return -1;
     assert(a.n == a.c.size() && b.n == b.c.size());
     long double dis = 0;
     for(int i = 0;i < a.n;i++) {
         dis += (a.c[i] - b.c[i]) * (a.c[i] - b.c[i]);
     }
-    dis = dis/(long double)a.n;
+    // dis = dis/(long double)a.n;
     dis = sqrt(dis);
     return dis;
 }
@@ -142,7 +143,7 @@ ball ballmap(vector<struct pt> pts, vector<long double> val, long double eps) {
     }
     sz.assign(m,0);
     for(int i = 0;i < m;i++) {
-        sz[i] = poi[i].size() + 2; // why +2 ??
+        sz[i] = poi[i].size() + 2; // +2 for the two end points
     }
     for(int i = 0;i < m;i++) {
         long double avg = 0;
@@ -169,10 +170,10 @@ ball ballmap(vector<struct pt> pts, vector<long double> val, long double eps) {
     // }
     for(int i = 0;i < ed0.size();i++){
         int j = i;
-        while(j < ed0.size() && ed0[i] == ed0[j]) j++;
+        while(j < ed0.size() && ed0[i].first == ed0[j].first && ed0[i].second == ed0[j].second) j++;
         ed.push_back(ed0[i]);
         wei.push_back(j-i);
-        i=j-1;
+        i=j;
     }
     bal.cl = cl;
     bal.cov = cov;
@@ -194,16 +195,16 @@ void balltofile (const struct ball &bal) {
         }
         cout << endl;
     }
-    {
-        string pois = "../"+FILENAME+"_points_covered_by_landmarks_tickers";
-        freopen( pois.c_str(), "w", stdout);
-        for(int i = 0;i < bal.poi.size();i++) {
-            for(int j = 0;j < bal.poi[i].size();j++) {
-                cout << " " << tickerlist[bal.poi[i][j]];
-            }
-            cout << endl;
-        }
-    }
+    // {
+    //     string pois = "../"+FILENAME+"_points_covered_by_landmarks_tickers";
+    //     freopen( pois.c_str(), "w", stdout);
+    //     for(int i = 0;i < bal.poi.size();i++) {
+    //         for(int j = 0;j < bal.poi[i].size();j++) {
+    //             cout << " " << tickerlist[bal.poi[i][j]];
+    //         }
+    //         cout << endl;
+    //     }
+    // }
     string ed = "../"+FILENAME+"_edges";
     freopen( ed.c_str(), "w", stdout);
     for (auto u: bal.ed) {
@@ -224,11 +225,11 @@ void balltofile (const struct ball &bal) {
     for(int i = 0;i < bal.land.size();i++) {
         cout << bal.land[i]+1 << endl;
     }
-    string land_tickers = "../"+FILENAME + "_landmarks_tickers";
-    freopen( land_tickers.c_str(), "w", stdout);
-    for(int i = 0;i < bal.land.size();i++) {
-        cout << tickerlist[bal.land[i]] << endl;
-    }
+    // string land_tickers = "../"+FILENAME + "_landmarks_tickers";
+    // freopen( land_tickers.c_str(), "w", stdout);
+    // for(int i = 0;i < bal.land.size();i++) {
+    //     cout << tickerlist[bal.land[i]] << endl;
+    // }
     string wei = "../"+FILENAME+"_edges_strength";
     freopen( wei.c_str(), "w", stdout);
     for(int i = 0;i < bal.wei.size();i++) {
@@ -241,8 +242,8 @@ vector<long double> csvlinetolist(string csvline) {
     stringstream ss(csvline);
     string item;
     // remove first item
-    getline(ss, item, ',');
-    tickerlist.push_back(item);
+    // getline(ss, item, ','); //TODO: add back
+    // tickerlist.push_back(item);
     while(getline(ss, item, ',')) {
         res.push_back(stod(item));
     }
@@ -253,7 +254,7 @@ int main(int argc, char** argv){
 
     Nos;
     tickerlist.clear();
-    long double eps = 0.5;
+    long double eps = 100;
     if(argc == 3) {
         string year, qtr;
         year = argv[1];
@@ -270,8 +271,10 @@ int main(int argc, char** argv){
         cerr << inputfilename << endl;
         freopen(inputfilename.c_str(), "r", stdin);
     } else {
-        cerr << "BAD INPUT: " << argc << " going with 2017 Q1";
-        freopen("../data/QuarterlyRatiosCleanNormalised/2017_Q1.csv", "r", stdin);
+        cerr << "BAD INPUT: " << argc << " going with 2017 Q1\n";
+        // freopen("../data/QuarterlyRatiosCleanNormalised/2017_Q1.csv", "r", stdin);
+        freopen("../BallMapper/data/boston.csv", "r", stdin);
+        // freopen("../BallMapper/data/rand.csv", "r", stdin);
     }
     // cout << fixed << setprecision(25);
 
@@ -314,6 +317,7 @@ int main(int argc, char** argv){
     //     pts.push_back(p);
     // }
     cerr << val.size() << " " << pts.size() << ln;
+    if (!pts.empty()) cerr << pts[0].c.size() << ln;
     ball b = ballmap(pts, val, eps);
 
     balltofile(b);

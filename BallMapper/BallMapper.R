@@ -843,7 +843,7 @@ colorByStDevValueOfOtherVariable<- function( outputFromBallMapper , newFunctionO
 }#colorByStDevValueOfOtherVariable
 
 
-# ############################ driver code ############################
+############################ driver code ############################
 # df <- read.csv("./data/QuarterlyRatiosCleanNormalised/2017_Q1.csv", header = TRUE)
 # values <- (df$at)
 # points <- subset(df, select = -V14)
@@ -851,7 +851,7 @@ colorByStDevValueOfOtherVariable<- function( outputFromBallMapper , newFunctionO
 # points <- df(select(roa, asset_turnover)) #(df$roa,asset_turnover)
 
 # l <- BallMapper(points, values, 0.5)
-# simdynet(l)
+# # simdynet(l)
 
 # no_of_landmarks = length( unlist(l['landmarks']) )
 # print(paste(unlist(l['landmarks'])))
@@ -864,15 +864,20 @@ colorByStDevValueOfOtherVariable<- function( outputFromBallMapper , newFunctionO
 #   print(paste(pts))
 # }
 
-# tot <- 0
-# num_it = 1
-# for(it in 1:num_it) {
-#     st<-proc.time()
-#     epsilon <- 80
-#     l <- BallMapper(points, values, epsilon)
-#     en <- proc.time()
-#     # print(paste("time taken by original ball mapper = ", en-st))
-#     tot <- tot + en-st
-# }
-# colplot(l)
-# print(paste("total time taken by original ball mapper = ", (tot/num_it)))
+df <- read.csv("./BallMapper/data/boston.csv", header = FALSE)
+# df <- read.csv("./BallMapper/data/rand.csv", header = FALSE)
+values <- (df$V14)
+points <- subset(df, select = -V14)
+
+tot <- 0
+num_it = 1
+for(it in 1:num_it) {
+    st<-proc.time()
+    epsilon <- 100
+    l <- BallMapper(points, values, epsilon)
+    en <- proc.time()
+    # print(paste("time taken by original ball mapper = ", en-st))
+    tot <- tot + en-st
+}
+colplot(l)
+print(paste("total time taken by original ball mapper = ", (tot/num_it)))
