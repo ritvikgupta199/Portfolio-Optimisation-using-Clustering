@@ -12,6 +12,7 @@ parser = argparse.ArgumentParser('max_sharpe')
 parser.add_argument('--year', type=int, help='Year')
 parser.add_argument('--quarter', type=int, help='Quarter')
 parser.add_argument('--dir', type=str, help='Directory to save the graph in')
+parser.add_argument('--model', type=str, help='Model to use')
 
 
 args = parser.parse_args()
@@ -80,7 +81,7 @@ ax.plot(dates, val_sp, color='blue', label='S&P500 Index')
 
 ax.set_xlabel("Date")
 ax.set_ylabel("Value of Portfolio")
-ax.set_title("Portfolio vs S&P500 Index")
+ax.set_title(f"Portfolio vs S&P500 Index ({args.model})")
 ax.legend()
 
-plt.savefig(f'../graphs/{args.dir}/{YEAR}_q{QTR}.png')
+plt.savefig(f'../graphs/{args.dir}/{YEAR}_q{QTR}_{args.model}.png')

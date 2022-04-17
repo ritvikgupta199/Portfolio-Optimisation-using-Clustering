@@ -10,11 +10,14 @@ from pypfopt import risk_models
 from pypfopt import expected_returns
 
 
-def get_mean_var_wts(prices):
+def get_mean_var_wts(prices, model):
     mu = expected_returns.mean_historical_return(prices)
     sigma = risk_models.sample_cov(prices)
     ef = EfficientFrontier(mu, sigma, weight_bounds=(0,1))
-    portfolio = ef.min_volatility()
+    if model == 'min_vol':
+        portfolio = ef.min_volatility()
+    elif model == 'max_sharpe':
+        portfolio = ef.max_sharpe()
     pf_wt = ef.clean_weights()
     return pf_wt
 
@@ -30,6 +33,7 @@ def write_wts(filename, wts):
 parser = argparse.ArgumentParser('max_sharpe')
 parser.add_argument('--year', type=int, help='Year')
 parser.add_argument('--quarter', type=int, help='Quarter')
+parser.add_argument('--model', type=str, help='Model to use')
 
 args = parser.parse_args()
 
