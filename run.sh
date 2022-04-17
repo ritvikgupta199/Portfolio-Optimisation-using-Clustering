@@ -1,10 +1,10 @@
-YEAR=2017
+YEAR=2018
 QTR=1
-SELECT_NUM=10
-EPS=0.3
+SELECT_NUM=2
+EPS=0.2
 DIR=select_"$SELECT_NUM"_eps_"$EPS"
 
-mkdir graphs/"$DIR"
+mkdir -p graphs/"$DIR"
 
 cd BallMapper
 g++ ball.cpp -o ball

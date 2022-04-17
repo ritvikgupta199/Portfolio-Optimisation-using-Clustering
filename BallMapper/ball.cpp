@@ -66,6 +66,7 @@ int dr[4] = {0, 1, 0, -1};
 int dc[4] = {1, 0, -1, 0};
 const int N = 3e5+3;
 const string FILENAME = "bm";
+vector<string> tickerlist;
 
 struct pt {
     int n;
@@ -193,6 +194,16 @@ void balltofile (const struct ball &bal) {
         }
         cout << endl;
     }
+    {
+        string pois = "../"+FILENAME+"_points_covered_by_landmarks_tickers";
+        freopen( pois.c_str(), "w", stdout);
+        for(int i = 0;i < bal.poi.size();i++) {
+            for(int j = 0;j < bal.poi[i].size();j++) {
+                cout << " " << tickerlist[bal.poi[i][j]];
+            }
+            cout << endl;
+        }
+    }
     string ed = "../"+FILENAME+"_edges";
     freopen( ed.c_str(), "w", stdout);
     for (auto u: bal.ed) {
@@ -213,20 +224,25 @@ void balltofile (const struct ball &bal) {
     for(int i = 0;i < bal.land.size();i++) {
         cout << bal.land[i]+1 << endl;
     }
+    string land_tickers = "../"+FILENAME + "_landmarks_tickers";
+    freopen( land_tickers.c_str(), "w", stdout);
+    for(int i = 0;i < bal.land.size();i++) {
+        cout << tickerlist[bal.land[i]] << endl;
+    }
     string wei = "../"+FILENAME+"_edges_strength";
     freopen( wei.c_str(), "w", stdout);
     for(int i = 0;i < bal.wei.size();i++) {
         cout << bal.wei[i] << endl;
     }
 }
-
 vector<long double> csvlinetolist(string csvline) {
     // decode one line of csv
     vector<long double> res;
     stringstream ss(csvline);
     string item;
-    // rempve first item
+    // remove first item
     getline(ss, item, ',');
+    tickerlist.push_back(item);
     while(getline(ss, item, ',')) {
         res.push_back(stod(item));
     }
@@ -236,6 +252,7 @@ vector<long double> csvlinetolist(string csvline) {
 int main(int argc, char** argv){   
 
     Nos;
+    tickerlist.clear();
     long double eps = 0.5;
     if(argc == 3) {
         string year, qtr;

@@ -14,7 +14,7 @@ def get_mean_var_wts(prices):
     mu = expected_returns.mean_historical_return(prices)
     sigma = risk_models.sample_cov(prices)
     ef = EfficientFrontier(mu, sigma, weight_bounds=(0,1))
-    portfolio = ef.min_volatility()
+    portfolio = ef.max_sharpe()
     pf_wt = ef.clean_weights()
     return pf_wt
 

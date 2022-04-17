@@ -25,7 +25,8 @@ parser.add_argument('--select_num', type=int, help='No of stocks to select in ea
 args = parser.parse_args()
 
 PRICES = '../data/prices/prices_' + str(args.year) + 'q' + str(args.quarter) + '.csv'
-TICKER_FILE = '../bm_points_covered_by_landmarks'
+TICKER_FILE = '../bm_points_covered_by_landmarks_tickers'
+# TICKER_FILE = '../bm_points_covered_by_landmarks'
 SNP_LIST = '../snp500sym.csv'
 SELECT_NUM = args.select_num
 SHORTLIST = 'portfolios/portfolio_shortlist.csv'
@@ -39,7 +40,11 @@ fw = open(SHORTLIST, 'w')
 all_selected = []
 for row in open(TICKER_FILE, 'r').readlines():
     tickers = row.strip().split(' ')
-    tickers = [snp_list[int(ticker)-1].strip() for ticker in tickers]
+    tickers = [ticker.strip() for ticker in tickers]
+    # tickers = [snp_list[int(ticker)-1].strip() for ticker in tickers]
+    # print(tickers)
+    # if len(tickers) <= 1: 
+    #     continue
     sharpe_dict = {}
     for ticker in tickers:
         sharpe_dict[ticker] = get_sharpe(ticker, pd.read_csv(PRICES))
