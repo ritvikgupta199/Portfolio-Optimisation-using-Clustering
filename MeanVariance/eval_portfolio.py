@@ -80,7 +80,7 @@ ax.plot(dates, val_bm, color='green', label='Portfolio using BM')
 ax.plot(dates, val_sp, color='blue', label='S&P500 Index')
 
 ax.set_xlabel("Date")
-ax.set_ylabel("Value of Portfolio")
+ax.set_ylabel("Value of Portfolio (in USD)")
 ax.set_title(f"Portfolio vs S&P500 Index for {YEAR} Q{QTR} ({args.model})")
 ax.legend()
 
